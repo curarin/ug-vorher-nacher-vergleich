@@ -8,7 +8,7 @@ __pycache__/
 
 #json files
 *.json
-*.toml
+*secrets.toml
 
 # Distribution / packaging
 .Python
