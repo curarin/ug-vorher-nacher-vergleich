@@ -15,7 +15,6 @@ def get_query(bq_table, country_value, url, comp_start_date):
                 url = '{url}'
                 and data_date >= '{comp_start_date}'
                 and country = '{country_value}'
-                and impressions > 5
             group by
                 data_date,
                 url,
