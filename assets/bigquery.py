@@ -50,6 +50,7 @@ def get_data_per_url(domain_wanted, comp_start_date, start_date, max_date, url):
     df["clicks"] = df["clicks"].astype(int)
     df["impressions"] = df["impressions"].astype(int)
     df["position"] = df["position"].astype(float)
+    print(df)
     df["tag"] = df.apply(lambda row: determine_timerange(row, start_date), axis=1)
     return df
 
