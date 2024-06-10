@@ -44,9 +44,17 @@ def calculate_total(df):
         """
     ).df()
     con.close()
+
     sum_clicks_prior = df_calculations[df_calculations['tag'] == 'prior']['sum_clicks'].values[0]
     sum_clicks_post = df_calculations[df_calculations['tag'] == 'after']['sum_clicks'].values[0]
+
+    if sum_clicks_prior.empty:
+        sum_clicks_prior = 0
+    if sum_clicks_post.empty:
+        sum_clicks_post = 0
+
     diff = int(sum_clicks_post) - int(sum_clicks_prior)
+    
     
     return sum_clicks_prior, sum_clicks_post, diff
 
@@ -132,9 +140,14 @@ def calculate_differences(df):
 
         """
     ).df()
-    sorted_df = df_calculations.sort_values(by=["sum_clicks_post", "sum_impr_post"], ascending=[False, False])
-    top_keyword_by_clicks = sorted_df.iloc[0]["query"]
     con.close()
+    sorted_df = df_calculations.sort_values(by=["sum_clicks_post", "sum_impr_post"], ascending=[False, False])
+
+    if sorted_df.empty:
+        top_keyword_by_clicks = None
+    else:
+        top_keyword_by_clicks = sorted_df.iloc[0]["query"]
+    
     return df_calculations, top_keyword_by_clicks
 
 def visualize_clicks(df):
@@ -172,21 +185,24 @@ def visualize_clicks(df):
     ).df()
     con.close()
 
-    color_scale = alt.Scale(
-        domain=["after", "prior"],
-        range=["#014d4e", "#F33A6A"]
-    )
-    chart = alt.Chart(df_clicks_over_time).mark_line().encode(
-        x=alt.X("date:T", title="Date", timeUnit='yearmonthdate', axis=alt.Axis(format="%m-%d")),
-        y=alt.Y("clicks:Q", title="Clicks per Day"),
-        color=alt.Color("tag:N", scale=color_scale, legend=alt.Legend(title="Zeitpunkt der Optimierung"))
-    ).properties(
-        width=700,
-        height=400,
-        title=f"Clicks over time | {url}"
-    ).interactive()
+    if not df_clicks_over_time.empty:
+        color_scale = alt.Scale(
+            domain=["after", "prior"],
+            range=["#014d4e", "#F33A6A"]
+        )
+        chart = alt.Chart(df_clicks_over_time).mark_line().encode(
+            x=alt.X("date:T", title="Date", timeUnit='yearmonthdate', axis=alt.Axis(format="%m-%d")),
+            y=alt.Y("clicks:Q", title="Clicks per Day"),
+            color=alt.Color("tag:N", scale=color_scale, legend=alt.Legend(title="Zeitpunkt der Optimierung"))
+        ).properties(
+            width=700,
+            height=400,
+            title=f"Clicks over time | '{url}'"
+        ).interactive()
 
-    st.altair_chart(chart, use_container_width=True)
+        st.altair_chart(chart, use_container_width=True)
+    else:
+        st.warning(f"ℹ No data for {url}.")
     return None
 
 def visualize_ranking_topquery(df, top_query):
@@ -224,21 +240,24 @@ def visualize_ranking_topquery(df, top_query):
     ).df()
     con.close()
 
-    color_scale = alt.Scale(
-        domain=["after", "prior"],
-        range=["#014d4e", "#F33A6A"]
-    )
-    chart = alt.Chart(df_clicks_over_time).mark_line().encode(
-        x=alt.X("date:T", title="Date", timeUnit='yearmonthdate', axis=alt.Axis(format="%m-%d")),
-        y=alt.Y("position:Q", title="Avg. Position per Day", scale=alt.Scale(reverse=True)),
-        color=alt.Color("tag:N", scale=color_scale, legend=alt.Legend(title="Zeitpunkt der Optimierung"))
-    ).properties(
-        width=700,
-        height=400,
-        title=f"Position over time for top query {top_query} | {url}"
-    ).interactive()
+    if not df_clicks_over_time.empty:
+        color_scale = alt.Scale(
+            domain=["after", "prior"],
+            range=["#014d4e", "#F33A6A"]
+        )
+        chart = alt.Chart(df_clicks_over_time).mark_line().encode(
+            x=alt.X("date:T", title="Date", timeUnit='yearmonthdate', axis=alt.Axis(format="%m-%d")),
+            y=alt.Y("position:Q", title="Avg. Position per Day", scale=alt.Scale(reverse=True)),
+            color=alt.Color("tag:N", scale=color_scale, legend=alt.Legend(title="Zeitpunkt der Optimierung"))
+        ).properties(
+            width=700,
+            height=400,
+            title=f"Position over time for top query '{top_query}' | '{url}'"
+        ).interactive()
 
-    st.altair_chart(chart, use_container_width=True)
+        st.altair_chart(chart, use_container_width=True)
+    else:
+        st.warning(f"ℹ No data for {url}.")
     return None
 
     
