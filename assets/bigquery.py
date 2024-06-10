@@ -44,14 +44,22 @@ def get_data_per_url(domain_wanted, comp_start_date, start_date, max_date, url):
     country_value = get_country_code(domain_wanted)
     query_get_data_per_url = get_query(bq_table, country_value, url, comp_start_date)
     df = client.query(query=query_get_data_per_url).to_dataframe()
-    df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
-    df["date"] = df["date"].dt.date
-    df = df.sort_values(by='date')
-    df["clicks"] = df["clicks"].astype(int)
-    df["impressions"] = df["impressions"].astype(int)
-    df["position"] = df["position"].astype(float)
-    print(df)
-    df["tag"] = df.apply(lambda row: determine_timerange(row, start_date), axis=1)
+    if not df.empty:
+        df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
+        df["date"] = df["date"].dt.date
+        df = df.sort_values(by='date')
+        df["clicks"] = df["clicks"].astype(int)
+        df["impressions"] = df["impressions"].astype(int)
+        df["position"] = df["position"].astype(float)
+        df["tag"] = df.apply(lambda row: determine_timerange(row, start_date), axis=1)
+        
+    else:
+        columns = ['date', 'url', 'query', 'clicks', 'impressions', 'position', 'tag']
+        df = pd.DataFrame(columns=columns)
+        df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
+        df["clicks"] = df["clicks"].astype(pd.Int64Dtype())
+        df["impressions"] = df["impressions"].astype(pd.Int64Dtype())
+        df["position"] = df["position"].astype(float)
     return df
 
 def dry_run_all_queries(domain_wanted, comp_start_date, start_date, max_date, url):
