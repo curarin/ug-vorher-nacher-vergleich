@@ -45,8 +45,20 @@ def calculate_total(df):
     ).df()
     con.close()
 
-    sum_clicks_prior = df_calculations[df_calculations['tag'] == 'prior']['sum_clicks'].values[0]
-    sum_clicks_post = df_calculations[df_calculations['tag'] == 'after']['sum_clicks'].values[0]
+    prior_clicks = df_calculations[df_calculations['tag'] == 'prior']['sum_clicks']
+    post_clicks = df_calculations[df_calculations['tag'] == 'after']['sum_clicks']
+    if prior_clicks.empty:
+        sum_clicks_prior = 0
+    else:
+        sum_clicks_prior = prior_clicks.sum()
+
+    if post_clicks.empty:
+        sum_clicks_post = 0
+    else:
+        sum_clicks_post = post_clicks.sum()
+
+    # sum_clicks_prior = df_calculations[df_calculations['tag'] == 'prior']['sum_clicks'].values[0]
+    # sum_clicks_post = df_calculations[df_calculations['tag'] == 'after']['sum_clicks'].values[0]
 
     diff = int(sum_clicks_post) - int(sum_clicks_prior)
     
