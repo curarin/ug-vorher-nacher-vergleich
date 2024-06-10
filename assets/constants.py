@@ -12,12 +12,11 @@ def get_query(bq_table, country_value, url, comp_start_date):
             from
                 {bq_table}
             where
-                data_date >= '{comp_start_date}'
-                and clicks > 0
-                and impressions > 5
+                url = '{url}'
+                and data_date >= '{comp_start_date}'
                 and country = '{country_value}'
-                and url = '{url}'
                 and query is not null
+                and impressions > 5
             group by
                 data_date,
                 url,
