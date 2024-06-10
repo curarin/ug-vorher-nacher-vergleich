@@ -68,8 +68,6 @@ def performance_change(domain_wanted):
             for url, date in url_date_dict.items():
                     start_date, comparison_start_date, comparison_end_date, delta_days = calculate_dates(date_current_iteration=date, max_date=max_date)
                     df = get_data_per_url(domain_wanted=domain_wanted, comp_start_date=comparison_start_date, start_date=start_date, max_date=max_date, url=url)
-                    st.write(url)
-                    st.write(df)
                     if not df.empty:
                         sum_clicks_prior, sum_clicks_post, sum_clicks_diff = calculate_total(df)
                         df_differences, top_keyword_by_clicks = calculate_differences(df)
