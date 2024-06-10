@@ -48,11 +48,6 @@ def calculate_total(df):
     sum_clicks_prior = df_calculations[df_calculations['tag'] == 'prior']['sum_clicks'].values[0]
     sum_clicks_post = df_calculations[df_calculations['tag'] == 'after']['sum_clicks'].values[0]
 
-    if sum_clicks_prior.empty:
-        sum_clicks_prior = 0
-    if sum_clicks_post.empty:
-        sum_clicks_post = 0
-
     diff = int(sum_clicks_post) - int(sum_clicks_prior)
     
     
